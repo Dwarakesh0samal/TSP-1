@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="en" ng-app="portfolioApp">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Trilokesh Samal | Senior Operations Executive</title>
+  <!-- Tailwind CSS CDN for rapid styling while maintaining custom controls -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+    :root {
+      --bg: oklch(99% 0.002 240);
+      --surface: oklch(100% 0 0);
+      --fg: oklch(18% 0.012 250);
+      --muted: oklch(44% 0.012 250);
+      --border: oklch(92% 0.005 250);
+      --accent: oklch(45% 0.1 190); /* Deep Teal */
+      --accent-light: oklch(90% 0.05 190);
+    }
+
+    body {
+      background-color: white;
+      color: #1a202c;
+      font-family: 'Inter', sans-serif;
+      scroll-behavior: smooth;
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .text-balance {
+      text-wrap: balance;
+    }
+
+    /* Three.js Canvas Styling */
+    #hero-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.5;
+    }
+
+    /* Timeline styling */
+    .timeline-container::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: #e2e8f0;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: -4px;
+      top: 10px;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #0d9488;
+      box-shadow: 0 0 0 4px white;
+    }
+
+    /* Custom classes for "Stripe" feel */
+    .stripe-shadow {
+      box-shadow: 0 50px 100px -20px rgba(50, 50, 93, 0.25), 
+                  0 30px 60px -30px rgba(0, 0, 0, 0.3);
+    }
+
+    .nav-link {
+      position: relative;
+      transition: color 0.2s ease;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: currentColor;
+      transition: width 0.2s ease;
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+    }
+
+    /* Animation */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-fade-in-up {
+      animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    [ng-cloak] { display: none !important; }
+  </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body ng-controller="PortfolioController as ctrl" ng-cloak class="antialiased text-slate-900">
+
+  <!-- Navigation -->
+  <nav class="fixed top-0 w-full z-50 glass border-b border-slate-100">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div class="font-extrabold tracking-tight text-xl text-slate-900">
+        TRILOKESH <span class="text-teal-600">SAMAL</span>
+      </div>
+      <div class="hidden md:flex gap-8 text-sm font-medium text-slate-500 uppercase tracking-widest">
+        <a href="#experience" class="nav-link hover:text-slate-900">Experience</a>
+        <a href="#skills" class="nav-link hover:text-slate-900">Skills</a>
+        <a href="#education" class="nav-link hover:text-slate-900">Education</a>
+      </div>
+      <div>
+        <a href="mq0h21sz-Trilokesh_Samal_CV.pdf" target="_blank" class="bg-slate-900 text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-slate-800 transition shadow-lg">Download CV</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="relative min-h-[90vh] flex items-center pt-16 overflow-hidden">
+    <div id="hero-canvas"></div>
+    <div class="max-w-7xl mx-auto px-6 w-full relative z-10">
+      <div class="grid lg:grid-cols-2 gap-16 items-center">
+        <div class="animate-fade-in-up">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 text-teal-700 text-xs font-bold uppercase tracking-wider mb-6">
+            <span class="w-2 h-2 rounded-full bg-teal-500 animate-pulse"></span>
+            Senior Operations Executive
+          </div>
+          <h1 class="text-6xl lg:text-8xl font-black text-slate-900 mb-6 leading-[0.9] tracking-tighter">
+            Scaling <span class="text-teal-600">Infrastructure</span> & Strategy.
+          </h1>
+          <p class="text-xl text-slate-600 mb-10 leading-relaxed max-w-lg text-balance">
+            Over 9 years of cross-functional leadership spanning Business Operations, Strategy Execution, and Infrastructure Engineering.
+          </p>
+          <div class="flex flex-wrap gap-4">
+            <a href="#experience" class="bg-teal-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-teal-700 transition stripe-shadow">View Trajectory</a>
+            <div class="flex items-center gap-4 px-6 py-4 rounded-xl border border-slate-200 font-semibold bg-white">
+               <svg class="w-5 h-5 text-teal-600" fill="currentColor" viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>
+               trilokesh.samal26@gmail.com
+            </div>
+          </div>
+        </div>
+        <div class="hidden lg:block relative">
+          <div class="relative z-10 stripe-shadow rounded-3xl overflow-hidden border-8 border-white bg-slate-100 aspect-[4/5] transform rotate-2">
+            <img src="mq0h2t0t-image.png" alt="Trilokesh Samal" class="w-full h-full object-cover">
+          </div>
+          <div class="absolute -bottom-10 -left-10 w-48 h-48 bg-teal-100 rounded-full blur-3xl opacity-50 -z-10"></div>
+          <div class="absolute -top-10 -right-10 w-48 h-48 bg-blue-100 rounded-full blur-3xl opacity-50 -z-10"></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Impact Metrics -->
+  <section class="py-24 bg-slate-50 border-y border-slate-200">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid md:grid-cols-3 gap-12">
+        <div ng-repeat="metric in ctrl.metrics" class="text-center md:text-left">
+          <div class="text-5xl font-black text-teal-600 mb-2">{{metric.value}}</div>
+          <div class="text-lg font-bold text-slate-900 mb-2">{{metric.label}}</div>
+          <p class="text-slate-500 text-sm leading-relaxed">{{metric.desc}}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Experience Section -->
+  <section id="experience" class="py-32">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="flex flex-col md:flex-row gap-16">
+        <div class="md:w-1/3">
+          <h2 class="text-4xl font-black text-slate-900 mb-6 sticky top-32">Professional <br><span class="text-teal-600">Trajectory</span></h2>
+          <p class="text-slate-500 text-lg leading-relaxed">
+            A decade of experience establishing market footprints and optimizing operational bottom lines for high-net-worth portfolios.
+          </p>
+        </div>
+        <div class="md:w-2/3">
+          <div class="space-y-16">
+            <div ng-repeat="job in ctrl.experience" class="relative pl-10 timeline-container">
+              <div class="timeline-dot"></div>
+              <div class="flex flex-col md:flex-row md:items-center justify-between mb-4">
+                <div>
+                  <h3 class="text-2xl font-bold text-slate-900">{{job.role}}</h3>
+                  <div class="text-teal-600 font-bold tracking-tight">{{job.company}}</div>
+                </div>
+                <div class="text-slate-400 font-medium text-sm mt-2 md:mt-0 px-3 py-1 bg-slate-100 rounded-lg">
+                  {{job.period}}
+                </div>
+              </div>
+              <ul class="space-y-3">
+                <li ng-repeat="bullet in job.highlights" class="text-slate-600 text-md leading-relaxed flex gap-3">
+                  <span class="text-teal-400 mt-1.5">•</span>
+                  {{bullet}}
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills Grid -->
+  <section id="skills" class="py-32 bg-slate-900 text-white rounded-[3rem] mx-4 my-8 overflow-hidden relative">
+    <div class="absolute top-0 right-0 w-96 h-96 bg-teal-500/10 blur-[100px] rounded-full"></div>
+    <div class="max-w-7xl mx-auto px-6 relative z-10">
+      <div class="mb-20">
+        <h2 class="text-5xl font-black mb-6">Expertise <span class="text-teal-400">& Systems</span></h2>
+        <p class="text-slate-400 text-lg max-w-xl">Deep technical proficiency meeting high-level business strategy.</p>
+      </div>
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div ng-repeat="(category, list) in ctrl.skills" class="p-8 rounded-3xl bg-white/5 border border-white/10 hover:bg-white/10 transition">
+          <h3 class="text-teal-400 font-bold mb-6 tracking-widest uppercase text-xs">{{category}}</h3>
+          <ul class="space-y-4">
+            <li ng-repeat="skill in list" class="flex items-center gap-3 font-medium text-slate-200">
+              <svg class="w-4 h-4 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+              {{skill}}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Education & Certs -->
+  <section id="education" class="py-32">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid md:grid-cols-2 gap-12">
+        <div>
+          <h2 class="text-3xl font-black text-slate-900 mb-12">Academic Foundation</h2>
+          <div class="space-y-8">
+            <div ng-repeat="edu in ctrl.education" class="p-8 rounded-2xl border border-slate-100 hover:border-teal-200 transition bg-slate-50/50">
+              <div class="text-teal-600 font-bold text-sm mb-2">{{edu.year}}</div>
+              <h3 class="text-xl font-bold text-slate-900 mb-1">{{edu.degree}}</h3>
+              <p class="text-slate-500 font-medium">{{edu.institution}}</p>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h2 class="text-3xl font-black text-slate-900 mb-12">Certifications</h2>
+          <div class="p-8 rounded-2xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-center h-full">
+            <div class="w-16 h-16 bg-teal-100 text-teal-600 rounded-full flex items-center justify-center mb-6">
+              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+            </div>
+            <h3 class="text-xl font-bold text-slate-900 mb-2">Advanced Diploma</h3>
+            <p class="text-slate-500 mb-4 text-balance">Structural Design & Analysis</p>
+            <span class="text-xs font-bold text-teal-600 bg-teal-50 px-3 py-1 rounded-full uppercase tracking-tighter">Verified Credential</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-white pt-24 pb-12 border-t border-slate-100">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-12 mb-20">
+        <div class="text-center md:text-left">
+          <h2 class="text-4xl font-black text-slate-900 mb-4">Direct Communication</h2>
+          <p class="text-slate-500">Available for executive advisory and high-impact operations leadership.</p>
+        </div>
+        <a href="mailto:trilokesh.samal26@gmail.com" class="text-3xl md:text-5xl font-black text-teal-600 hover:text-teal-700 transition tracking-tighter">
+          trilokesh.samal26@gmail.com
+        </a>
+      </div>
+      <div class="flex flex-col md:flex-row items-center justify-between pt-12 border-t border-slate-100 text-slate-400 text-sm">
+        <div class="flex gap-8 mb-6 md:mb-0 font-semibold uppercase tracking-widest text-xs">
+          <a href="#" class="hover:text-slate-900 transition">LinkedIn</a>
+          <a href="#" class="hover:text-slate-900 transition">Twitter</a>
+        </div>
+        <p>© 2024 Trilokesh Samal. Built with Angular & Three.js</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const app = angular.module('portfolioApp', []);
+
+    app.controller('PortfolioController', function() {
+      this.metrics = [
+        { value: "100%", label: "CSAT Score", desc: "Maintained perfect client satisfaction across regional business growth strategies." },
+        { value: "9+ Yrs", label: "Operations Exp", desc: "Cross-functional leadership spanning strategy, scaling, and infrastructure." },
+        { value: "Multi-Cr", label: "Portfolio Mgt", desc: "Successfully delivered high-budget structural layouts for corporate & gov entities." }
+      ];
+
+      this.experience = [
+        {
+          role: "Business Manager – Strategy & Operations",
+          company: "Livspace India Pvt Ltd",
+          period: "May 2024 – Present",
+          highlights: [
+            "Orchestrate regional business growth strategies and end-to-end design operations.",
+            "Formulate and execute structured training frameworks for creative and technical teams.",
+            "Successfully maintaining a strict 100% Client Satisfaction (CSAT) score.",
+            "Optimizing Net Promoter Scores (NPS) to directly match global corporate standards."
+          ]
+        },
+        {
+          role: "Senior Manager – Regional Strategy & Sales",
+          company: "Doowup",
+          period: "Jan 2024 – Apr 2024",
+          highlights: [
+            "Pioneered localized market-entry strategies by marrying technical design with business development.",
+            "Directed an elite multidisciplinary team to scale bespoke spatial solutions for high-net-worth portfolios."
+          ]
+        },
+        {
+          role: "Senior Project Lead & Furniture Designer",
+          company: "Della Luxury Products",
+          period: "Jul 2023 – Jan 2024",
+          highlights: [
+            "Supervised operational conceptualization and engineering integrity of premium luxury lines.",
+            "Bridged communication between heavy manufacturing, creative desks, and executive stakeholders."
+          ]
+        },
+        {
+          role: "Senior Production Manager & Designer",
+          company: "Furniture Gallery",
+          period: "Sep 2022 – Jul 2023",
+          highlights: [
+            "Owned end-to-end management of production facility workflows and asset scheduling.",
+            "Maintained strict corporate fiscal discipline with exhaustive individual line-item cost analyses."
+          ]
+        },
+        {
+          role: "Project In-Charge & Lead Designer",
+          company: "Furniture Plaza",
+          period: "Jun 2020 – Sep 2022",
+          highlights: [
+            "Directed multi-phase project management for high-visibility government and corporate installations.",
+            "Authored technical AutoCAD structures for multi-million-rupee projects.",
+            "Engineered meticulous Bill of Quantities (BOQs) to insulate budgets against variance."
+          ]
+        }
+      ];
+
+      this.skills = {
+        "Strategic": ["Change Management", "Team Mentorship", "P&L Accountability"],
+        "Operations": ["Process Optimization", "Project Lifecycles", "CRM Ecosystems"],
+        "Financial": ["BOQ Controls", "Procurement Strategy", "Capital Expense"],
+        "Technical": ["AutoCAD", "Spatial Analytics", "CAD/CAM Systems"]
+      };
+
+      this.education = [
+        { year: "2023", degree: "Masters In Interior Design", institution: "INIFD Bhubaneswar" },
+        { year: "2014", degree: "B.Tech In Civil Engineering", institution: "VIVTECH" }
+      ];
+    });
+
+    // --- Three.js Hero Animation ---
+    function initThree() {
+      const container = document.getElementById('hero-canvas');
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      
+      renderer.setSize(container.offsetWidth, container.offsetHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
+      container.appendChild(renderer.domElement);
+
+      // Create a grid of points representing "Infrastructure"
+      const geometry = new THREE.BufferGeometry();
+      const vertices = [];
+      const size = 50;
+      const step = 5;
+
+      for (let i = -size; i <= size; i += step) {
+        for (let j = -size; j <= size; j += step) {
+          vertices.push(i, 0, j);
+        }
+      }
+
+      geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+      
+      const material = new THREE.PointsMaterial({
+        color: 0x0d9488, // teal-600
+        size: 0.4,
+        transparent: true,
+        opacity: 0.6
+      });
+
+      const points = new THREE.Points(geometry, material);
+      scene.add(points);
+
+      // Connecting lines for a more "McKinsey/Data" feel
+      const lineMaterial = new THREE.LineBasicMaterial({ color: 0x0d9488, transparent: true, opacity: 0.1 });
+      const lineGeometry = new THREE.BufferGeometry();
+      const lineVertices = [];
+
+      // Add some random connections to simulate a network
+      for (let i = 0; i < 200; i++) {
+        const v1 = vertices.slice(Math.floor(Math.random() * vertices.length / 3) * 3, (Math.floor(Math.random() * vertices.length / 3) * 3) + 3);
+        const v2 = vertices.slice(Math.floor(Math.random() * vertices.length / 3) * 3, (Math.floor(Math.random() * vertices.length / 3) * 3) + 3);
+        lineVertices.push(...v1, ...v2);
+      }
+      lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(lineVertices, 3));
+      const lines = new THREE.LineSegments(lineGeometry, lineMaterial);
+      scene.add(lines);
+
+      camera.position.set(20, 30, 60);
+      camera.lookAt(0, 0, 0);
+
+      function animate() {
+        requestAnimationFrame(animate);
+        
+        const time = Date.now() * 0.0005;
+        points.rotation.y = time * 0.1;
+        lines.rotation.y = time * 0.1;
+        
+        // Subtle wave effect
+        const positions = geometry.attributes.position.array;
+        for (let i = 0; i < positions.length; i += 3) {
+          positions[i + 1] = Math.sin((positions[i] + time * 10) * 0.1) * 2 + 
+                             Math.cos((positions[i + 2] + time * 10) * 0.1) * 2;
+        }
+        geometry.attributes.position.needsUpdate = true;
+        
+        renderer.render(scene, camera);
+      }
+
+      window.addEventListener('resize', () => {
+        camera.aspect = container.offsetWidth / container.offsetHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.offsetWidth, container.offsetHeight);
+      });
+
+      animate();
+    }
+
+    window.addEventListener('DOMContentLoaded', initThree);
+  </script>
+</body>
+</html>
