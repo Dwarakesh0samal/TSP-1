@@ -205,23 +205,10 @@
       </div>
       <div class="flex items-center gap-3">
         <!-- Theme toggle -->
-        <button class="theme-toggle" ng-click="ctrl.toggleTheme()" title="Toggle theme" aria-label="Toggle theme">
-          <!-- Sun icon (shown in dark mode) -->
-          <svg ng-if="ctrl.isDark" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="5"></circle>
-            <line x1="12" y1="1"  x2="12" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="23"></line>
-            <line x1="4.22" y1="4.22"  x2="5.64" y2="5.64"></line>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-            <line x1="1"  y1="12" x2="3"  y2="12"></line>
-            <line x1="21" y1="12" x2="23" y2="12"></line>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-          </svg>
-          <!-- Moon icon (shown in light mode) -->
-          <svg ng-if="!ctrl.isDark" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
-          </svg>
+        <button id="theme-toggle-btn" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle theme"
+          style="display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:999px;border:1.5px solid var(--border);background:var(--surface);color:var(--fg);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s ease;font-family:inherit;">
+          <span id="theme-icon" style="font-size:15px;line-height:1;">🌙</span>
+          <span id="theme-label">Dark</span>
         </button>
         <a href="mq0h21sz-Trilokesh_Samal_CV.pdf" target="_blank"
            class="bg-slate-900 text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-slate-800 transition shadow-lg dark-cv-btn">
@@ -401,21 +388,7 @@
     app.controller('PortfolioController', function() {
       const ctrl = this;
 
-      // ── Theme ──────────────────────────────────────────────
-      const stored = localStorage.getItem('theme');
-      ctrl.isDark = stored === 'dark' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches);
-      if (ctrl.isDark) document.documentElement.classList.add('dark');
-
-      ctrl.toggleTheme = function() {
-        ctrl.isDark = !ctrl.isDark;
-        if (ctrl.isDark) {
-          document.documentElement.classList.add('dark');
-          localStorage.setItem('theme', 'dark');
-        } else {
-          document.documentElement.classList.remove('dark');
-          localStorage.setItem('theme', 'light');
-        }
-      };
+      // theme handled by standalone toggleTheme() below
 
       // ── Data ───────────────────────────────────────────────
       ctrl.metrics = [
@@ -554,6 +527,34 @@
     }
 
     window.addEventListener('DOMContentLoaded', initThree);
+
+    // ── Standalone theme toggle (no AngularJS dependency) ──
+    function applyTheme(dark) {
+      const icon  = document.getElementById('theme-icon');
+      const label = document.getElementById('theme-label');
+      if (dark) {
+        document.documentElement.classList.add('dark');
+        if (icon)  icon.textContent  = '☀️';
+        if (label) label.textContent = 'Light';
+        localStorage.setItem('theme', 'dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+        if (icon)  icon.textContent  = '🌙';
+        if (label) label.textContent = 'Dark';
+        localStorage.setItem('theme', 'light');
+      }
+    }
+
+    function toggleTheme() {
+      applyTheme(!document.documentElement.classList.contains('dark'));
+    }
+
+    // Apply saved preference immediately
+    (function() {
+      const stored = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      applyTheme(stored === 'dark' || (!stored && prefersDark));
+    })();
   </script>
 </body>
 </html>
