@@ -4,154 +4,257 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Trilokesh Samal | Senior Operations Executive</title>
-  <!-- Tailwind CSS CDN for rapid styling while maintaining custom controls -->
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
+    /* ── Light theme (default) ── */
     :root {
-      --bg: oklch(99% 0.002 240);
-      --surface: oklch(100% 0 0);
-      --fg: oklch(18% 0.012 250);
-      --muted: oklch(44% 0.012 250);
-      --border: oklch(92% 0.005 250);
-      --accent: oklch(45% 0.1 190); /* Deep Teal */
-      --accent-light: oklch(90% 0.05 190);
+      --bg: #ffffff;
+      --bg-alt: #f8fafc;
+      --surface: #ffffff;
+      --fg: #1a202c;
+      --fg-muted: #64748b;
+      --border: #e2e8f0;
+      --nav-glass: rgba(255,255,255,0.75);
+      --card-bg: rgba(248,250,252,0.5);
+      --card-border: #e2e8f0;
+      --card-hover: #ccfbf1;
+      --badge-bg: #f0fdfa;
+      --badge-text: #0f766e;
+      --period-bg: #f1f5f9;
+      --period-text: #94a3b8;
+      --dot-shadow: #ffffff;
+      --timeline-line: #e2e8f0;
+      --email-bg: #ffffff;
+      --footer-bg: #ffffff;
+      --footer-border: #e2e8f0;
+      --link-hover: #1a202c;
+    }
+
+    /* ── Dark theme ── */
+    html.dark {
+      --bg: #0f172a;
+      --bg-alt: #1e293b;
+      --surface: #1e293b;
+      --fg: #f1f5f9;
+      --fg-muted: #94a3b8;
+      --border: #334155;
+      --nav-glass: rgba(15,23,42,0.80);
+      --card-bg: rgba(30,41,59,0.6);
+      --card-border: #334155;
+      --card-hover: #134e4a;
+      --badge-bg: #134e4a;
+      --badge-text: #5eead4;
+      --period-bg: #1e293b;
+      --period-text: #64748b;
+      --dot-shadow: #0f172a;
+      --timeline-line: #334155;
+      --email-bg: #1e293b;
+      --footer-bg: #0f172a;
+      --footer-border: #1e293b;
+      --link-hover: #f1f5f9;
     }
 
     body {
-      background-color: white;
-      color: #1a202c;
+      background-color: var(--bg);
+      color: var(--fg);
       font-family: 'Inter', sans-serif;
       scroll-behavior: smooth;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     .glass {
-      background: rgba(255, 255, 255, 0.7);
+      background: var(--nav-glass);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      border: 1px solid var(--border);
+      transition: background 0.3s ease, border-color 0.3s ease;
     }
 
-    .text-balance {
-      text-wrap: balance;
-    }
+    .text-balance { text-wrap: balance; }
 
-    /* Three.js Canvas Styling */
     #hero-canvas {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       z-index: 0;
       pointer-events: none;
       opacity: 0.5;
     }
 
-    /* Timeline styling */
     .timeline-container::before {
       content: '';
       position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
+      left: 0; top: 0; bottom: 0;
       width: 1px;
-      background: #e2e8f0;
+      background: var(--timeline-line);
+      transition: background 0.3s ease;
     }
 
     .timeline-dot {
       position: absolute;
-      left: -4px;
-      top: 10px;
-      width: 9px;
-      height: 9px;
+      left: -4px; top: 10px;
+      width: 9px; height: 9px;
       border-radius: 50%;
       background: #0d9488;
-      box-shadow: 0 0 0 4px white;
+      box-shadow: 0 0 0 4px var(--dot-shadow);
+      transition: box-shadow 0.3s ease;
     }
 
-    /* Custom classes for "Stripe" feel */
     .stripe-shadow {
-      box-shadow: 0 50px 100px -20px rgba(50, 50, 93, 0.25), 
-                  0 30px 60px -30px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 50px 100px -20px rgba(50,50,93,0.25),
+                  0 30px 60px -30px rgba(0,0,0,0.3);
     }
 
     .nav-link {
       position: relative;
       transition: color 0.2s ease;
     }
-
     .nav-link::after {
       content: '';
       position: absolute;
-      bottom: -2px;
-      left: 0;
-      width: 0;
-      height: 1px;
+      bottom: -2px; left: 0;
+      width: 0; height: 1px;
       background: currentColor;
       transition: width 0.2s ease;
     }
+    .nav-link:hover::after { width: 100%; }
 
-    .nav-link:hover::after {
-      width: 100%;
-    }
-
-    /* Animation */
     @keyframes fadeInUp {
       from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+      to   { opacity: 1; transform: translateY(0); }
     }
-
     .animate-fade-in-up {
       animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
+
+    /* Theme toggle button */
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--fg-muted);
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    }
+    .theme-toggle:hover {
+      background: var(--bg-alt);
+      color: var(--fg);
+      transform: rotate(15deg);
+    }
+
+    /* Dynamic color overrides */
+    .dyn-bg        { background-color: var(--bg); transition: background-color 0.3s ease; }
+    .dyn-bg-alt    { background-color: var(--bg-alt); transition: background-color 0.3s ease; }
+    .dyn-surface   { background-color: var(--surface); transition: background-color 0.3s ease; }
+    .dyn-fg        { color: var(--fg); transition: color 0.3s ease; }
+    .dyn-fg-muted  { color: var(--fg-muted); transition: color 0.3s ease; }
+    .dyn-border    { border-color: var(--border); transition: border-color 0.3s ease; }
+
+    .dyn-card {
+      background-color: var(--card-bg);
+      border-color: var(--card-border);
+      transition: background-color 0.3s ease, border-color 0.2s ease;
+    }
+    .dyn-card:hover { border-color: var(--card-hover); }
+
+    .dyn-badge {
+      background-color: var(--badge-bg);
+      color: var(--badge-text);
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .dyn-period {
+      background-color: var(--period-bg);
+      color: var(--period-text);
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .dyn-email-pill {
+      background-color: var(--email-bg);
+      border-color: var(--border);
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .dyn-footer    { background-color: var(--footer-bg); border-color: var(--footer-border); transition: background-color 0.3s ease, border-color 0.3s ease; }
+    .dyn-link-hover:hover { color: var(--link-hover); transition: color 0.2s ease; }
 
     [ng-cloak] { display: none !important; }
   </style>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
-<body ng-controller="PortfolioController as ctrl" ng-cloak class="antialiased text-slate-900">
+<body ng-controller="PortfolioController as ctrl" ng-cloak class="antialiased">
 
   <!-- Navigation -->
-  <nav class="fixed top-0 w-full z-50 glass border-b border-slate-100">
+  <nav class="fixed top-0 w-full z-50 glass">
     <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-      <div class="font-extrabold tracking-tight text-xl text-slate-900">
+      <div class="font-extrabold tracking-tight text-xl dyn-fg">
         TRILOKESH <span class="text-teal-600">SAMAL</span>
       </div>
-      <div class="hidden md:flex gap-8 text-sm font-medium text-slate-500 uppercase tracking-widest">
-        <a href="#experience" class="nav-link hover:text-slate-900">Experience</a>
-        <a href="#skills" class="nav-link hover:text-slate-900">Skills</a>
-        <a href="#education" class="nav-link hover:text-slate-900">Education</a>
+      <div class="hidden md:flex gap-8 text-sm font-medium dyn-fg-muted uppercase tracking-widest">
+        <a href="#experience" class="nav-link dyn-link-hover">Experience</a>
+        <a href="#skills"     class="nav-link dyn-link-hover">Skills</a>
+        <a href="#education"  class="nav-link dyn-link-hover">Education</a>
       </div>
-      <div>
-        <a href="mq0h21sz-Trilokesh_Samal_CV.pdf" target="_blank" class="bg-slate-900 text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-slate-800 transition shadow-lg">Download CV</a>
+      <div class="flex items-center gap-3">
+        <!-- Theme toggle -->
+        <button class="theme-toggle" ng-click="ctrl.toggleTheme()" title="Toggle theme" aria-label="Toggle theme">
+          <!-- Sun icon (shown in dark mode) -->
+          <svg ng-if="ctrl.isDark" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1"  x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22"  x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1"  y1="12" x2="3"  y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <!-- Moon icon (shown in light mode) -->
+          <svg ng-if="!ctrl.isDark" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+          </svg>
+        </button>
+        <a href="mq0h21sz-Trilokesh_Samal_CV.pdf" target="_blank"
+           class="bg-slate-900 text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-slate-800 transition shadow-lg dark-cv-btn">
+          Download CV
+        </a>
       </div>
     </div>
   </nav>
 
   <!-- Hero Section -->
-  <header class="relative min-h-[90vh] flex items-center pt-16 overflow-hidden">
+  <header class="relative min-h-[90vh] flex items-center pt-16 overflow-hidden dyn-bg">
     <div id="hero-canvas"></div>
     <div class="max-w-7xl mx-auto px-6 w-full relative z-10">
       <div class="grid lg:grid-cols-2 gap-16 items-center">
         <div class="animate-fade-in-up">
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 text-teal-700 text-xs font-bold uppercase tracking-wider mb-6">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full dyn-badge text-xs font-bold uppercase tracking-wider mb-6">
             <span class="w-2 h-2 rounded-full bg-teal-500 animate-pulse"></span>
             Senior Operations Executive
           </div>
-          <h1 class="text-6xl lg:text-8xl font-black text-slate-900 mb-6 leading-[0.9] tracking-tighter">
+          <h1 class="text-6xl lg:text-8xl font-black dyn-fg mb-6 leading-[0.9] tracking-tighter">
             Scaling <span class="text-teal-600">Infrastructure</span> & Strategy.
           </h1>
-          <p class="text-xl text-slate-600 mb-10 leading-relaxed max-w-lg text-balance">
+          <p class="text-xl dyn-fg-muted mb-10 leading-relaxed max-w-lg text-balance">
             Over 9 years of cross-functional leadership spanning Business Operations, Strategy Execution, and Infrastructure Engineering.
           </p>
           <div class="flex flex-wrap gap-4">
             <a href="#experience" class="bg-teal-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-teal-700 transition stripe-shadow">View Trajectory</a>
-            <div class="flex items-center gap-4 px-6 py-4 rounded-xl border border-slate-200 font-semibold bg-white">
-               <svg class="w-5 h-5 text-teal-600" fill="currentColor" viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>
-               trilokesh.samal26@gmail.com
+            <div class="flex items-center gap-4 px-6 py-4 rounded-xl border dyn-email-pill font-semibold dyn-fg">
+              <svg class="w-5 h-5 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
+                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
+              </svg>
+              trilokesh.samal26@gmail.com
             </div>
           </div>
         </div>
@@ -167,25 +270,25 @@
   </header>
 
   <!-- Impact Metrics -->
-  <section class="py-24 bg-slate-50 border-y border-slate-200">
+  <section class="py-24 dyn-bg-alt border-y dyn-border">
     <div class="max-w-7xl mx-auto px-6">
       <div class="grid md:grid-cols-3 gap-12">
         <div ng-repeat="metric in ctrl.metrics" class="text-center md:text-left">
           <div class="text-5xl font-black text-teal-600 mb-2">{{metric.value}}</div>
-          <div class="text-lg font-bold text-slate-900 mb-2">{{metric.label}}</div>
-          <p class="text-slate-500 text-sm leading-relaxed">{{metric.desc}}</p>
+          <div class="text-lg font-bold dyn-fg mb-2">{{metric.label}}</div>
+          <p class="dyn-fg-muted text-sm leading-relaxed">{{metric.desc}}</p>
         </div>
       </div>
     </div>
   </section>
 
   <!-- Experience Section -->
-  <section id="experience" class="py-32">
+  <section id="experience" class="py-32 dyn-bg">
     <div class="max-w-7xl mx-auto px-6">
       <div class="flex flex-col md:flex-row gap-16">
         <div class="md:w-1/3">
-          <h2 class="text-4xl font-black text-slate-900 mb-6 sticky top-32">Professional <br><span class="text-teal-600">Trajectory</span></h2>
-          <p class="text-slate-500 text-lg leading-relaxed">
+          <h2 class="text-4xl font-black dyn-fg mb-6 sticky top-32">Professional <br><span class="text-teal-600">Trajectory</span></h2>
+          <p class="dyn-fg-muted text-lg leading-relaxed">
             A decade of experience establishing market footprints and optimizing operational bottom lines for high-net-worth portfolios.
           </p>
         </div>
@@ -195,15 +298,15 @@
               <div class="timeline-dot"></div>
               <div class="flex flex-col md:flex-row md:items-center justify-between mb-4">
                 <div>
-                  <h3 class="text-2xl font-bold text-slate-900">{{job.role}}</h3>
+                  <h3 class="text-2xl font-bold dyn-fg">{{job.role}}</h3>
                   <div class="text-teal-600 font-bold tracking-tight">{{job.company}}</div>
                 </div>
-                <div class="text-slate-400 font-medium text-sm mt-2 md:mt-0 px-3 py-1 bg-slate-100 rounded-lg">
+                <div class="dyn-period font-medium text-sm mt-2 md:mt-0 px-3 py-1 rounded-lg">
                   {{job.period}}
                 </div>
               </div>
               <ul class="space-y-3">
-                <li ng-repeat="bullet in job.highlights" class="text-slate-600 text-md leading-relaxed flex gap-3">
+                <li ng-repeat="bullet in job.highlights" class="dyn-fg-muted text-md leading-relaxed flex gap-3">
                   <span class="text-teal-400 mt-1.5">•</span>
                   {{bullet}}
                 </li>
@@ -220,7 +323,7 @@
     <div class="absolute top-0 right-0 w-96 h-96 bg-teal-500/10 blur-[100px] rounded-full"></div>
     <div class="max-w-7xl mx-auto px-6 relative z-10">
       <div class="mb-20">
-        <h2 class="text-5xl font-black mb-6">Expertise <span class="text-teal-400">& Systems</span></h2>
+        <h2 class="text-5xl font-black mb-6">Expertise <span class="text-teal-400">&amp; Systems</span></h2>
         <p class="text-slate-400 text-lg max-w-xl">Deep technical proficiency meeting high-level business strategy.</p>
       </div>
       <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -228,7 +331,9 @@
           <h3 class="text-teal-400 font-bold mb-6 tracking-widest uppercase text-xs">{{category}}</h3>
           <ul class="space-y-4">
             <li ng-repeat="skill in list" class="flex items-center gap-3 font-medium text-slate-200">
-              <svg class="w-4 h-4 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+              <svg class="w-4 h-4 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+              </svg>
               {{skill}}
             </li>
           </ul>
@@ -238,28 +343,30 @@
   </section>
 
   <!-- Education & Certs -->
-  <section id="education" class="py-32">
+  <section id="education" class="py-32 dyn-bg">
     <div class="max-w-7xl mx-auto px-6">
       <div class="grid md:grid-cols-2 gap-12">
         <div>
-          <h2 class="text-3xl font-black text-slate-900 mb-12">Academic Foundation</h2>
+          <h2 class="text-3xl font-black dyn-fg mb-12">Academic Foundation</h2>
           <div class="space-y-8">
-            <div ng-repeat="edu in ctrl.education" class="p-8 rounded-2xl border border-slate-100 hover:border-teal-200 transition bg-slate-50/50">
+            <div ng-repeat="edu in ctrl.education" class="p-8 rounded-2xl border dyn-card transition">
               <div class="text-teal-600 font-bold text-sm mb-2">{{edu.year}}</div>
-              <h3 class="text-xl font-bold text-slate-900 mb-1">{{edu.degree}}</h3>
-              <p class="text-slate-500 font-medium">{{edu.institution}}</p>
+              <h3 class="text-xl font-bold dyn-fg mb-1">{{edu.degree}}</h3>
+              <p class="dyn-fg-muted font-medium">{{edu.institution}}</p>
             </div>
           </div>
         </div>
         <div>
-          <h2 class="text-3xl font-black text-slate-900 mb-12">Certifications</h2>
-          <div class="p-8 rounded-2xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-center h-full">
-            <div class="w-16 h-16 bg-teal-100 text-teal-600 rounded-full flex items-center justify-center mb-6">
-              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+          <h2 class="text-3xl font-black dyn-fg mb-12">Certifications</h2>
+          <div class="p-8 rounded-2xl border-2 border-dashed dyn-border flex flex-col items-center justify-center text-center h-full">
+            <div class="w-16 h-16 dyn-badge rounded-full flex items-center justify-center mb-6">
+              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+              </svg>
             </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-2">Advanced Diploma</h3>
-            <p class="text-slate-500 mb-4 text-balance">Structural Design & Analysis</p>
-            <span class="text-xs font-bold text-teal-600 bg-teal-50 px-3 py-1 rounded-full uppercase tracking-tighter">Verified Credential</span>
+            <h3 class="text-xl font-bold dyn-fg mb-2">Advanced Diploma</h3>
+            <p class="dyn-fg-muted mb-4 text-balance">Structural Design &amp; Analysis</p>
+            <span class="text-xs font-bold text-teal-600 dyn-badge px-3 py-1 rounded-full uppercase tracking-tighter">Verified Credential</span>
           </div>
         </div>
       </div>
@@ -267,23 +374,23 @@
   </section>
 
   <!-- Footer -->
-  <footer class="bg-white pt-24 pb-12 border-t border-slate-100">
+  <footer class="dyn-footer pt-24 pb-12 border-t">
     <div class="max-w-7xl mx-auto px-6">
       <div class="flex flex-col md:flex-row items-center justify-between gap-12 mb-20">
         <div class="text-center md:text-left">
-          <h2 class="text-4xl font-black text-slate-900 mb-4">Direct Communication</h2>
-          <p class="text-slate-500">Available for executive advisory and high-impact operations leadership.</p>
+          <h2 class="text-4xl font-black dyn-fg mb-4">Direct Communication</h2>
+          <p class="dyn-fg-muted">Available for executive advisory and high-impact operations leadership.</p>
         </div>
         <a href="mailto:trilokesh.samal26@gmail.com" class="text-3xl md:text-5xl font-black text-teal-600 hover:text-teal-700 transition tracking-tighter">
           trilokesh.samal26@gmail.com
         </a>
       </div>
-      <div class="flex flex-col md:flex-row items-center justify-between pt-12 border-t border-slate-100 text-slate-400 text-sm">
+      <div class="flex flex-col md:flex-row items-center justify-between pt-12 border-t dyn-border dyn-fg-muted text-sm">
         <div class="flex gap-8 mb-6 md:mb-0 font-semibold uppercase tracking-widest text-xs">
-          <a href="#" class="hover:text-slate-900 transition">LinkedIn</a>
-          <a href="#" class="hover:text-slate-900 transition">Twitter</a>
+          <a href="#" class="dyn-link-hover transition">LinkedIn</a>
+          <a href="#" class="dyn-link-hover transition">Twitter</a>
         </div>
-        <p>© 2024 Trilokesh Samal. Built with Angular & Three.js</p>
+        <p>© 2024 Trilokesh Samal. Built with Angular &amp; Three.js</p>
       </div>
     </div>
   </footer>
@@ -292,13 +399,32 @@
     const app = angular.module('portfolioApp', []);
 
     app.controller('PortfolioController', function() {
-      this.metrics = [
+      const ctrl = this;
+
+      // ── Theme ──────────────────────────────────────────────
+      const stored = localStorage.getItem('theme');
+      ctrl.isDark = stored === 'dark' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      if (ctrl.isDark) document.documentElement.classList.add('dark');
+
+      ctrl.toggleTheme = function() {
+        ctrl.isDark = !ctrl.isDark;
+        if (ctrl.isDark) {
+          document.documentElement.classList.add('dark');
+          localStorage.setItem('theme', 'dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+          localStorage.setItem('theme', 'light');
+        }
+      };
+
+      // ── Data ───────────────────────────────────────────────
+      ctrl.metrics = [
         { value: "100%", label: "CSAT Score", desc: "Maintained perfect client satisfaction across regional business growth strategies." },
         { value: "9+ Yrs", label: "Operations Exp", desc: "Cross-functional leadership spanning strategy, scaling, and infrastructure." },
         { value: "Multi-Cr", label: "Portfolio Mgt", desc: "Successfully delivered high-budget structural layouts for corporate & gov entities." }
       ];
 
-      this.experience = [
+      ctrl.experience = [
         {
           role: "Business Manager – Strategy & Operations",
           company: "Livspace India Pvt Ltd",
@@ -349,60 +475,48 @@
         }
       ];
 
-      this.skills = {
-        "Strategic": ["Change Management", "Team Mentorship", "P&L Accountability"],
-        "Operations": ["Process Optimization", "Project Lifecycles", "CRM Ecosystems"],
-        "Financial": ["BOQ Controls", "Procurement Strategy", "Capital Expense"],
-        "Technical": ["AutoCAD", "Spatial Analytics", "CAD/CAM Systems"]
+      ctrl.skills = {
+        "Strategic":   ["Change Management", "Team Mentorship", "P&L Accountability"],
+        "Operations":  ["Process Optimization", "Project Lifecycles", "CRM Ecosystems"],
+        "Financial":   ["BOQ Controls", "Procurement Strategy", "Capital Expense"],
+        "Technical":   ["AutoCAD", "Spatial Analytics", "CAD/CAM Systems"]
       };
 
-      this.education = [
+      ctrl.education = [
         { year: "2023", degree: "Masters In Interior Design", institution: "INIFD Bhubaneswar" },
         { year: "2014", degree: "B.Tech In Civil Engineering", institution: "VIVTECH" }
       ];
     });
 
-    // --- Three.js Hero Animation ---
+    // ── Three.js Hero Animation ────────────────────────────
     function initThree() {
       const container = document.getElementById('hero-canvas');
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
       const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-      
+
       renderer.setSize(container.offsetWidth, container.offsetHeight);
       renderer.setPixelRatio(window.devicePixelRatio);
       container.appendChild(renderer.domElement);
 
-      // Create a grid of points representing "Infrastructure"
       const geometry = new THREE.BufferGeometry();
       const vertices = [];
-      const size = 50;
-      const step = 5;
+      const size = 50, step = 5;
 
-      for (let i = -size; i <= size; i += step) {
-        for (let j = -size; j <= size; j += step) {
+      for (let i = -size; i <= size; i += step)
+        for (let j = -size; j <= size; j += step)
           vertices.push(i, 0, j);
-        }
-      }
 
       geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-      
-      const material = new THREE.PointsMaterial({
-        color: 0x0d9488, // teal-600
-        size: 0.4,
-        transparent: true,
-        opacity: 0.6
-      });
 
+      const material = new THREE.PointsMaterial({ color: 0x0d9488, size: 0.4, transparent: true, opacity: 0.6 });
       const points = new THREE.Points(geometry, material);
       scene.add(points);
 
-      // Connecting lines for a more "McKinsey/Data" feel
       const lineMaterial = new THREE.LineBasicMaterial({ color: 0x0d9488, transparent: true, opacity: 0.1 });
       const lineGeometry = new THREE.BufferGeometry();
       const lineVertices = [];
 
-      // Add some random connections to simulate a network
       for (let i = 0; i < 200; i++) {
         const v1 = vertices.slice(Math.floor(Math.random() * vertices.length / 3) * 3, (Math.floor(Math.random() * vertices.length / 3) * 3) + 3);
         const v2 = vertices.slice(Math.floor(Math.random() * vertices.length / 3) * 3, (Math.floor(Math.random() * vertices.length / 3) * 3) + 3);
@@ -417,19 +531,16 @@
 
       function animate() {
         requestAnimationFrame(animate);
-        
         const time = Date.now() * 0.0005;
         points.rotation.y = time * 0.1;
-        lines.rotation.y = time * 0.1;
-        
-        // Subtle wave effect
+        lines.rotation.y  = time * 0.1;
+
         const positions = geometry.attributes.position.array;
         for (let i = 0; i < positions.length; i += 3) {
-          positions[i + 1] = Math.sin((positions[i] + time * 10) * 0.1) * 2 + 
+          positions[i + 1] = Math.sin((positions[i] + time * 10) * 0.1) * 2 +
                              Math.cos((positions[i + 2] + time * 10) * 0.1) * 2;
         }
         geometry.attributes.position.needsUpdate = true;
-        
         renderer.render(scene, camera);
       }
 
