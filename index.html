@@ -80,7 +80,31 @@
       width: 100%; height: 100%;
       z-index: 0;
       pointer-events: none;
-      opacity: 0.5;
+    }
+
+    /* Gradient overlay so hero text stays legible over the 3D building */
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background: linear-gradient(
+        105deg,
+        rgba(255,255,255,0.96) 0%,
+        rgba(255,255,255,0.78) 38%,
+        rgba(255,255,255,0.18) 68%,
+        transparent 100%
+      );
+      transition: background 0.8s ease;
+    }
+    html.dark .hero-overlay {
+      background: linear-gradient(
+        105deg,
+        rgba(15,23,42,0.97) 0%,
+        rgba(15,23,42,0.80) 38%,
+        rgba(15,23,42,0.18) 68%,
+        transparent 100%
+      );
     }
 
     .timeline-container::before {
@@ -241,6 +265,7 @@
   <!-- Hero Section -->
   <header class="relative min-h-[90vh] flex items-center pt-16 overflow-hidden dyn-bg">
     <div id="hero-canvas"></div>
+    <div class="hero-overlay"></div>
     <div class="max-w-7xl mx-auto px-6 w-full relative z-10">
       <div class="grid lg:grid-cols-2 gap-16 items-center">
         <div class="animate-fade-in-up">
@@ -287,28 +312,6 @@
         </div>
       </div>
     </div>
-  </section>
-
-  <!-- 3D Architectural Showcase -->
-  <section class="relative overflow-hidden building-section" style="height:82vh;min-height:520px;">
-    <div id="building-canvas" style="width:100%;height:100%;"></div>
-
-    <!-- Top overlay -->
-    <div style="position:absolute;top:0;left:0;right:0;padding:2rem 2.5rem;pointer-events:none;z-index:10;background:linear-gradient(to bottom,rgba(0,0,0,0.38) 0%,transparent 100%);">
-      <div style="display:inline-flex;align-items:center;gap:0.5rem;background:rgba(13,148,136,0.85);color:white;padding:0.35rem 0.9rem;border-radius:999px;font-size:0.65rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.9rem;">
-        <span style="width:7px;height:7px;background:white;border-radius:50%;display:inline-block;animation:pulse 2s infinite;"></span>
-        Interactive 3D Model
-      </div>
-      <h2 style="font-size:clamp(1.8rem,4vw,3rem);font-weight:900;color:white;text-shadow:0 2px 24px rgba(0,0,0,0.55);line-height:1.05;margin:0;">
-        Architectural <span style="color:#2dd4bf;">Visualization</span>
-      </h2>
-      <p style="color:rgba(255,255,255,0.78);margin-top:0.5rem;font-size:0.9rem;font-weight:500;">Residential building concept — designed for modern living</p>
-    </div>
-
-    <!-- Bottom controls hint -->
-    <div class="scene-hint">🖱️ Drag to rotate &nbsp;·&nbsp; Scroll to zoom</div>
-    <!-- Day/Night badge -->
-    <div class="scene-badge" id="scene-mode-badge">☀️ Day Mode</div>
   </section>
 
   <!-- Experience Section -->
@@ -503,76 +506,9 @@
       ];
     });
 
-    // ── Three.js Hero Animation ────────────────────────────
-    function initThree() {
-      const container = document.getElementById('hero-canvas');
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
-      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-
-      renderer.setSize(container.offsetWidth, container.offsetHeight);
-      renderer.setPixelRatio(window.devicePixelRatio);
-      container.appendChild(renderer.domElement);
-
-      const geometry = new THREE.BufferGeometry();
-      const vertices = [];
-      const size = 50, step = 5;
-
-      for (let i = -size; i <= size; i += step)
-        for (let j = -size; j <= size; j += step)
-          vertices.push(i, 0, j);
-
-      geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-
-      const material = new THREE.PointsMaterial({ color: 0x0d9488, size: 0.4, transparent: true, opacity: 0.6 });
-      const points = new THREE.Points(geometry, material);
-      scene.add(points);
-
-      const lineMaterial = new THREE.LineBasicMaterial({ color: 0x0d9488, transparent: true, opacity: 0.1 });
-      const lineGeometry = new THREE.BufferGeometry();
-      const lineVertices = [];
-
-      for (let i = 0; i < 200; i++) {
-        const v1 = vertices.slice(Math.floor(Math.random() * vertices.length / 3) * 3, (Math.floor(Math.random() * vertices.length / 3) * 3) + 3);
-        const v2 = vertices.slice(Math.floor(Math.random() * vertices.length / 3) * 3, (Math.floor(Math.random() * vertices.length / 3) * 3) + 3);
-        lineVertices.push(...v1, ...v2);
-      }
-      lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(lineVertices, 3));
-      const lines = new THREE.LineSegments(lineGeometry, lineMaterial);
-      scene.add(lines);
-
-      camera.position.set(20, 30, 60);
-      camera.lookAt(0, 0, 0);
-
-      function animate() {
-        requestAnimationFrame(animate);
-        const time = Date.now() * 0.0005;
-        points.rotation.y = time * 0.1;
-        lines.rotation.y  = time * 0.1;
-
-        const positions = geometry.attributes.position.array;
-        for (let i = 0; i < positions.length; i += 3) {
-          positions[i + 1] = Math.sin((positions[i] + time * 10) * 0.1) * 2 +
-                             Math.cos((positions[i + 2] + time * 10) * 0.1) * 2;
-        }
-        geometry.attributes.position.needsUpdate = true;
-        renderer.render(scene, camera);
-      }
-
-      window.addEventListener('resize', () => {
-        camera.aspect = container.offsetWidth / container.offsetHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(container.offsetWidth, container.offsetHeight);
-      });
-
-      animate();
-    }
-
-    window.addEventListener('DOMContentLoaded', initThree);
-
-    // ── 3D Residential Building Scene ─────────────────────
+    // ── 3D Residential Building — Hero Background ─────────
     function initBuilding() {
-      const container = document.getElementById('building-canvas');
+      const container = document.getElementById('hero-canvas');
       if (!container) return;
 
       const scene = new THREE.Scene();
@@ -590,19 +526,7 @@
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
       container.appendChild(renderer.domElement);
 
-      const controls = new THREE.OrbitControls(camera, renderer.domElement);
-      controls.target.set(0, 7, 0);
-      controls.enableDamping = true;
-      controls.dampingFactor = 0.06;
-      controls.minDistance = 18;
-      controls.maxDistance = 90;
-      controls.maxPolarAngle = Math.PI / 2.05;
-      controls.autoRotate = true;
-      controls.autoRotateSpeed = 0.5;
-      controls.update();
-
-      // Stop auto-rotate on user interaction, resume after
-      renderer.domElement.addEventListener('pointerdown', () => { controls.autoRotate = false; });
+      // Camera will orbit automatically — no user controls needed for background
 
       // ── Lights ──
       const ambientLight = new THREE.AmbientLight(0xfff5e4, 0.65);
@@ -802,7 +726,6 @@
 
       // ── Expose scene controls for day/night toggle ──
       window.updateBuildingScene = function(isDark) {
-        const badge = document.getElementById('scene-mode-badge');
         if (isDark) {
           scene.background = new THREE.Color(0x05080f);
           scene.fog.color  = new THREE.Color(0x05080f);
@@ -813,7 +736,6 @@
           fillLight.intensity = 0.08;
           winMat.emissive.set(0xffdd88);
           winMat.emissiveIntensity = 0.75;
-          if (badge) badge.textContent = '🌙 Night Mode';
         } else {
           scene.background = new THREE.Color(0x87ceeb);
           scene.fog.color  = new THREE.Color(0x87ceeb);
@@ -824,7 +746,6 @@
           fillLight.intensity = 0.35;
           winMat.emissive.set(0x001020);
           winMat.emissiveIntensity = 0;
-          if (badge) badge.textContent = '☀️ Day Mode';
         }
       };
 
@@ -832,10 +753,19 @@
       const isDarkNow = document.documentElement.classList.contains('dark');
       if (isDarkNow) window.updateBuildingScene(true);
 
-      // ── Animate ──
+      // ── Animate — slow camera orbit around the building ──
+      const startTime = Date.now();
       function animate() {
         requestAnimationFrame(animate);
-        controls.update();
+        const t = (Date.now() - startTime) * 0.00008;
+        // Oscillate in a ±30° arc around the front-right position
+        const baseAngle = 0.4;
+        const angle = baseAngle + Math.sin(t) * 0.45;
+        const radius = 42;
+        camera.position.x = Math.sin(angle) * radius;
+        camera.position.z = Math.cos(angle) * radius;
+        camera.position.y = 13 + Math.sin(t * 0.6) * 1.8;
+        camera.lookAt(0, 7, 0);
         renderer.render(scene, camera);
       }
 
