@@ -189,6 +189,26 @@
   </style>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <style>
+    #building-canvas canvas { display: block; }
+    .building-section { background: #87ceeb; transition: background 1s ease; }
+    html.dark .building-section { background: #0a0f1a; }
+
+    .scene-badge {
+      position: absolute; bottom: 1.5rem; right: 2rem;
+      background: rgba(0,0,0,0.35); backdrop-filter: blur(8px);
+      color: white; padding: 0.5rem 1.1rem; border-radius: 999px;
+      font-size: 0.75rem; font-weight: 700; z-index: 10;
+      letter-spacing: 0.04em; transition: opacity 0.4s;
+    }
+    .scene-hint {
+      position: absolute; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+      background: rgba(0,0,0,0.25); backdrop-filter: blur(6px);
+      color: rgba(255,255,255,0.85); padding: 0.4rem 1rem; border-radius: 999px;
+      font-size: 0.72rem; font-weight: 600; z-index: 10; white-space: nowrap;
+    }
+  </style>
 </head>
 <body ng-controller="PortfolioController as ctrl" ng-cloak class="antialiased">
 
@@ -267,6 +287,28 @@
         </div>
       </div>
     </div>
+  </section>
+
+  <!-- 3D Architectural Showcase -->
+  <section class="relative overflow-hidden building-section" style="height:82vh;min-height:520px;">
+    <div id="building-canvas" style="width:100%;height:100%;"></div>
+
+    <!-- Top overlay -->
+    <div style="position:absolute;top:0;left:0;right:0;padding:2rem 2.5rem;pointer-events:none;z-index:10;background:linear-gradient(to bottom,rgba(0,0,0,0.38) 0%,transparent 100%);">
+      <div style="display:inline-flex;align-items:center;gap:0.5rem;background:rgba(13,148,136,0.85);color:white;padding:0.35rem 0.9rem;border-radius:999px;font-size:0.65rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.9rem;">
+        <span style="width:7px;height:7px;background:white;border-radius:50%;display:inline-block;animation:pulse 2s infinite;"></span>
+        Interactive 3D Model
+      </div>
+      <h2 style="font-size:clamp(1.8rem,4vw,3rem);font-weight:900;color:white;text-shadow:0 2px 24px rgba(0,0,0,0.55);line-height:1.05;margin:0;">
+        Architectural <span style="color:#2dd4bf;">Visualization</span>
+      </h2>
+      <p style="color:rgba(255,255,255,0.78);margin-top:0.5rem;font-size:0.9rem;font-weight:500;">Residential building concept — designed for modern living</p>
+    </div>
+
+    <!-- Bottom controls hint -->
+    <div class="scene-hint">🖱️ Drag to rotate &nbsp;·&nbsp; Scroll to zoom</div>
+    <!-- Day/Night badge -->
+    <div class="scene-badge" id="scene-mode-badge">☀️ Day Mode</div>
   </section>
 
   <!-- Experience Section -->
@@ -528,6 +570,287 @@
 
     window.addEventListener('DOMContentLoaded', initThree);
 
+    // ── 3D Residential Building Scene ─────────────────────
+    function initBuilding() {
+      const container = document.getElementById('building-canvas');
+      if (!container) return;
+
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x87ceeb);
+      scene.fog = new THREE.FogExp2(0x87ceeb, 0.012);
+
+      const W = container.offsetWidth, H = container.offsetHeight;
+      const camera = new THREE.PerspectiveCamera(42, W / H, 0.1, 600);
+      camera.position.set(28, 18, 38);
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(W, H);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      container.appendChild(renderer.domElement);
+
+      const controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.target.set(0, 7, 0);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.06;
+      controls.minDistance = 18;
+      controls.maxDistance = 90;
+      controls.maxPolarAngle = Math.PI / 2.05;
+      controls.autoRotate = true;
+      controls.autoRotateSpeed = 0.5;
+      controls.update();
+
+      // Stop auto-rotate on user interaction, resume after
+      renderer.domElement.addEventListener('pointerdown', () => { controls.autoRotate = false; });
+
+      // ── Lights ──
+      const ambientLight = new THREE.AmbientLight(0xfff5e4, 0.65);
+      scene.add(ambientLight);
+
+      const sun = new THREE.DirectionalLight(0xfffde7, 1.3);
+      sun.position.set(35, 55, 25);
+      sun.castShadow = true;
+      sun.shadow.mapSize.set(2048, 2048);
+      sun.shadow.camera.near = 0.5;
+      sun.shadow.camera.far = 250;
+      sun.shadow.camera.left = sun.shadow.camera.bottom = -50;
+      sun.shadow.camera.right = sun.shadow.camera.top = 50;
+      sun.shadow.bias = -0.0003;
+      scene.add(sun);
+
+      const fillLight = new THREE.DirectionalLight(0xc0d8ff, 0.35);
+      fillLight.position.set(-20, 10, -20);
+      scene.add(fillLight);
+
+      // ── Materials ──
+      const M = (color, opts) => new THREE.MeshLambertMaterial({ color, ...opts });
+      const wall     = M(0xf2ece0);
+      const wallDark = M(0xddd4c4);
+      const band     = M(0xc5bba8);
+      const roofMat  = M(0x2e2e2e);
+      const winMat   = new THREE.MeshPhongMaterial({ color: 0x1a4a7a, emissive: 0x001020, shininess: 80, specular: 0x446688 });
+      const frameMat = M(0xffffff);
+      const balMat   = M(0xfaf6f0);
+      const doorMat  = M(0x6b4226);
+      const groundMat= M(0x5a8a3c);
+      const pathMat  = M(0xb0a898);
+      const trunkMat = M(0x8b6914);
+      const foliMat  = M(0x267326);
+      const foliMat2 = M(0x2d8c2d);
+      const concMat  = M(0x9e9689);
+
+      // ── Helper ──
+      function box(w, h, d, mat, x, y, z, rx, ry) {
+        const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+        m.position.set(x, y, z);
+        if (rx) m.rotation.x = rx;
+        if (ry) m.rotation.y = ry;
+        m.castShadow = true;
+        m.receiveShadow = true;
+        scene.add(m);
+        return m;
+      }
+
+      // ── Ground ──
+      const gnd = new THREE.Mesh(new THREE.PlaneGeometry(150, 150), groundMat);
+      gnd.rotation.x = -Math.PI / 2;
+      gnd.receiveShadow = true;
+      scene.add(gnd);
+
+      // Pavement path
+      box(6, 0.06, 18, pathMat, 0, 0.02, 10);
+      // Pavement border strips
+      box(0.3, 0.06, 18, concMat, -3.15, 0.03, 10);
+      box(0.3, 0.06, 18, concMat,  3.15, 0.03, 10);
+
+      // ── Main Building ──
+      const bW = 14, bD = 5, flH = 3.2, nF = 5;
+      const totalH = flH * nF;
+
+      // Core body
+      box(bW, totalH, bD, wall, 0, totalH / 2, 0);
+
+      // Side wings (slight protrusion per floor for depth)
+      box(1.5, totalH, 0.6, wallDark, -bW/2 - 0.75, totalH/2, 0);
+      box(1.5, totalH, 0.6, wallDark,  bW/2 + 0.75, totalH/2, 0);
+
+      // Horizontal floor bands
+      for (let f = 0; f <= nF; f++) {
+        box(bW + 3.6, 0.28, bD + 0.3, band, 0, f * flH + (f === 0 ? 0.14 : 0), 0);
+      }
+
+      // ── Roof ──
+      box(bW + 4.2, 0.25, bD + 0.5, roofMat, 0, totalH + 0.12, 0);   // slab
+      box(bW + 4.2, 0.9, 0.25, roofMat, 0, totalH + 0.57, (bD + 0.5)/2); // front parapet
+      box(bW + 4.2, 0.9, 0.25, roofMat, 0, totalH + 0.57, -(bD + 0.5)/2); // back parapet
+      box(0.25, 0.9, bD + 0.5, roofMat, -(bW + 4.2)/2, totalH + 0.57, 0);
+      box(0.25, 0.9, bD + 0.5, roofMat,  (bW + 4.2)/2, totalH + 0.57, 0);
+      // Rooftop water tank
+      box(2, 1.5, 2, roofMat, 4, totalH + 1.1, 0);
+      box(0.15, 1.5, 0.15, band, 4.7, totalH + 0.9, 0.7);
+      // Rooftop stairwell box
+      box(2.5, 2.2, 2, wallDark, -4, totalH + 1.1, 0);
+      box(2.5, 0.18, 2, roofMat, -4, totalH + 2.29, 0);
+
+      // ── Windows ──
+      const wW = 1.3, wH = 1.7;
+      const wXs = [-4.5, -1.5, 1.5, 4.5];
+
+      for (let f = 0; f < nF; f++) {
+        const wY = f * flH + flH * 0.54;
+        for (const wx of wXs) {
+          // Frame
+          box(wW + 0.18, wH + 0.18, 0.14, frameMat, wx, wY, bD / 2 + 0.07);
+          // Glass
+          const g = box(wW, wH, 0.12, winMat, wx, wY, bD / 2 + 0.14);
+          // Sill
+          box(wW + 0.3, 0.12, 0.3, band, wx, wY - wH/2 - 0.06, bD / 2 + 0.18);
+        }
+        // Back windows (2 per floor)
+        for (const wx of [-3, 3]) {
+          box(wW + 0.18, wH + 0.18, 0.14, frameMat, wx, wY, -bD / 2 - 0.07);
+          box(wW, wH, 0.12, winMat, wx, wY, -bD / 2 - 0.14);
+        }
+        // Side windows
+        for (const wz of [-0.5, 0.5]) {
+          box(0.14, wH + 0.18, wW + 0.18, frameMat, bW/2 + 0.75 + 0.8, wY, wz * 0.5);
+          box(0.12, wH, wW, winMat, bW/2 + 0.75 + 0.87, wY, wz * 0.5);
+          box(0.14, wH + 0.18, wW + 0.18, frameMat, -bW/2 - 0.75 - 0.8, wY, wz * 0.5);
+          box(0.12, wH, wW, winMat, -bW/2 - 0.75 - 0.87, wY, wz * 0.5);
+        }
+      }
+
+      // ── Balconies (floors 1-4) ──
+      for (let f = 1; f < nF; f++) {
+        const bY = f * flH;
+        // Slab
+        box(bW + 3.2, 0.14, 1.8, balMat, 0, bY + 0.07, bD/2 + 0.9);
+        // Glass railing panels
+        const railH = 0.85;
+        for (let i = -3; i <= 3; i++) {
+          if (i !== 0) box(1.5, railH, 0.06, new THREE.MeshPhongMaterial({ color: 0x88aabb, transparent: true, opacity: 0.55, shininess: 120 }),
+            i * 2.4, bY + railH/2 + 0.14, bD/2 + 1.72);
+        }
+        // Top railing bar
+        box(bW + 3.2, 0.08, 0.08, frameMat, 0, bY + railH + 0.14, bD/2 + 1.72);
+        // Side panels
+        box(0.06, railH, 1.8, frameMat, -(bW + 3.2)/2, bY + railH/2 + 0.14, bD/2 + 0.9);
+        box(0.06, railH, 1.8, frameMat,  (bW + 3.2)/2, bY + railH/2 + 0.14, bD/2 + 0.9);
+      }
+
+      // ── Ground Floor: Entrance ──
+      // Door arch
+      box(2.4, 2.9, 0.15, doorMat, 0, 1.45, bD/2 + 0.08);
+      box(2.6, 3.0, 0.1, frameMat, 0, 1.5, bD/2 + 0.14);
+      // Door panels
+      box(1.0, 2.7, 0.08, M(0x8b5e3c), -0.55, 1.45, bD/2 + 0.18);
+      box(1.0, 2.7, 0.08, M(0x8b5e3c),  0.55, 1.45, bD/2 + 0.18);
+      // Transom window above door
+      box(2.4, 0.5, 0.1, winMat, 0, 3.05, bD/2 + 0.14);
+
+      // Canopy
+      box(5, 0.18, 2.4, concMat, 0, 3.5, bD/2 + 1.2);
+      box(5, 0.14, 0.1, M(0x0d9488), 0, 3.6, bD/2 + 2.38);
+      // Canopy pillars
+      for (const px of [-2.2, 2.2]) {
+        box(0.2, 3.5, 0.2, concMat, px, 1.75, bD/2 + 2.3);
+      }
+      // Steps
+      box(4, 0.18, 0.7, concMat, 0, 0.09, bD/2 + 0.38);
+      box(3.4, 0.18, 0.7, concMat, 0, 0.27, bD/2 + 1.08);
+      box(2.8, 0.18, 0.7, concMat, 0, 0.45, bD/2 + 1.78);
+
+      // ── Trees ──
+      function tree(x, z, h, r, variant) {
+        box(0.28, h * 0.55, 0.28, trunkMat, x, h * 0.275, z);
+        const coneH = h * 0.6, coneR = r;
+        const fMat = variant ? foliMat2 : foliMat;
+        const c1 = new THREE.Mesh(new THREE.ConeGeometry(coneR, coneH, 9), fMat);
+        c1.position.set(x, h * 0.55 + coneH * 0.5, z);
+        c1.castShadow = true;
+        scene.add(c1);
+        const c2 = new THREE.Mesh(new THREE.ConeGeometry(coneR * 0.75, coneH * 0.7, 9), fMat);
+        c2.position.set(x, h * 0.55 + coneH * 0.95, z);
+        c2.castShadow = true;
+        scene.add(c2);
+      }
+      tree(-10, 6,  5.5, 1.8, 0);
+      tree( 10, 6,  5.5, 1.8, 1);
+      tree(-11, -2, 6.5, 2.0, 0);
+      tree( 11, -2, 6.5, 2.0, 1);
+      tree(-9,  12, 5,   1.6, 1);
+      tree( 9,  12, 5,   1.6, 0);
+      tree(-13,  9, 7,   2.2, 0);
+      tree( 13,  9, 7,   2.2, 1);
+
+      // Low hedges along path
+      box(1.2, 0.7, 5, foliMat, -4.5, 0.35, 8);
+      box(1.2, 0.7, 5, foliMat,  4.5, 0.35, 8);
+
+      // ── Lamp posts ──
+      function lamp(x, z) {
+        box(0.12, 5.5, 0.12, M(0x444444), x, 2.75, z);
+        box(0.8, 0.12, 0.12, M(0x444444), x + 0.4, 5.3, z);
+        const globe = new THREE.Mesh(new THREE.SphereGeometry(0.22, 10, 10),
+          new THREE.MeshPhongMaterial({ color: 0xffffcc, emissive: 0xffff88, emissiveIntensity: 1 }));
+        globe.position.set(x + 0.8, 5.3, z);
+        scene.add(globe);
+      }
+      lamp(-5.5, 7);
+      lamp( 5.5, 7);
+
+      // ── Expose scene controls for day/night toggle ──
+      window.updateBuildingScene = function(isDark) {
+        const badge = document.getElementById('scene-mode-badge');
+        if (isDark) {
+          scene.background = new THREE.Color(0x05080f);
+          scene.fog.color  = new THREE.Color(0x05080f);
+          ambientLight.color.set(0x1a2a4a);
+          ambientLight.intensity = 0.25;
+          sun.color.set(0x2244aa);
+          sun.intensity = 0.15;
+          fillLight.intensity = 0.08;
+          winMat.emissive.set(0xffdd88);
+          winMat.emissiveIntensity = 0.75;
+          if (badge) badge.textContent = '🌙 Night Mode';
+        } else {
+          scene.background = new THREE.Color(0x87ceeb);
+          scene.fog.color  = new THREE.Color(0x87ceeb);
+          ambientLight.color.set(0xfff5e4);
+          ambientLight.intensity = 0.65;
+          sun.color.set(0xfffde7);
+          sun.intensity = 1.3;
+          fillLight.intensity = 0.35;
+          winMat.emissive.set(0x001020);
+          winMat.emissiveIntensity = 0;
+          if (badge) badge.textContent = '☀️ Day Mode';
+        }
+      };
+
+      // Apply current theme on init
+      const isDarkNow = document.documentElement.classList.contains('dark');
+      if (isDarkNow) window.updateBuildingScene(true);
+
+      // ── Animate ──
+      function animate() {
+        requestAnimationFrame(animate);
+        controls.update();
+        renderer.render(scene, camera);
+      }
+
+      window.addEventListener('resize', () => {
+        const nW = container.offsetWidth, nH = container.offsetHeight;
+        camera.aspect = nW / nH;
+        camera.updateProjectionMatrix();
+        renderer.setSize(nW, nH);
+      });
+
+      animate();
+    }
+
+    window.addEventListener('DOMContentLoaded', initBuilding);
+
     // ── Standalone theme toggle (no AngularJS dependency) ──
     function applyTheme(dark) {
       const icon  = document.getElementById('theme-icon');
@@ -542,6 +865,10 @@
         if (icon)  icon.textContent  = '🌙';
         if (label) label.textContent = 'Dark';
         localStorage.setItem('theme', 'light');
+      }
+      // Sync 3D building scene lighting
+      if (typeof window.updateBuildingScene === 'function') {
+        window.updateBuildingScene(dark);
       }
     }
 
