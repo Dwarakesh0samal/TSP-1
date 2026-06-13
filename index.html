@@ -67,10 +67,31 @@
 
     .glass {
       background: var(--nav-glass);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border: 1px solid var(--border);
       transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    /* Custom Animations */
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in-up {
+      opacity: 0;
+      animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    
+    @keyframes float {
+      0% { transform: translateY(0px) rotate(2deg); }
+      50% { transform: translateY(-12px) rotate(3deg); }
+      100% { transform: translateY(0px) rotate(2deg); }
+    }
+    .animate-float {
+      animation: float 6s ease-in-out infinite;
+      /* ensure the photo always stays slightly rotated and centered on mobile */
+      transform-origin: center center;
     }
 
     .text-balance { text-wrap: balance; }
@@ -284,8 +305,8 @@
             </a>
           </div>
         </div>
-        <div class="relative mt-12 lg:mt-0 max-w-sm mx-auto lg:max-w-none">
-          <div class="relative z-10 stripe-shadow rounded-3xl overflow-hidden border-8 border-white bg-slate-100 aspect-[4/5] transform rotate-2">
+        <div class="relative mt-12 lg:mt-0 max-w-sm mx-auto lg:max-w-none animate-fade-in-up" style="animation-delay: 0.3s;">
+          <div class="relative z-10 stripe-shadow rounded-3xl overflow-hidden border-8 border-white bg-slate-100 aspect-[4/5] animate-float">
             <img src="mq0h2t0t-image.png" alt="Trilokesh Samal" class="w-full h-full object-cover">
           </div>
           <div class="absolute -bottom-10 -left-10 w-48 h-48 bg-teal-100 rounded-full blur-3xl opacity-50 -z-10"></div>
