@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Portfolio of Trilokesh Samal, Senior Operations Executive specializing in scaling infrastructure and strategy." />
   <title>Trilokesh Samal | Senior Operations Executive</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -81,6 +82,7 @@
       z-index: 0;
       pointer-events: none;
       object-fit: cover;
+      transform: scale(1.35) translate(2%, 2%); /* Scaled up significantly and shifted slightly to push the bottom-right watermark fully off screen */
     }
 
     /* Gradient overlay so hero text stays legible over the 3D building */
@@ -201,6 +203,16 @@
       transition: background-color 0.3s ease, color 0.3s ease;
     }
 
+    .dyn-skills-section {
+      background-color: #0f172a; /* slate-900 */
+      border: 1px solid transparent;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+    html.dark .dyn-skills-section {
+      background-color: #1e293b; /* slate-800 */
+      border-color: #334155; /* slate-700 */
+    }
+
     .dyn-email-pill {
       background-color: var(--email-bg);
       border-color: var(--border);
@@ -263,13 +275,13 @@
           </p>
           <div class="flex flex-wrap gap-4">
             <a href="#experience" class="bg-teal-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-teal-700 transition stripe-shadow">View Trajectory</a>
-            <div class="flex items-center gap-4 px-6 py-4 rounded-xl border dyn-email-pill font-semibold dyn-fg">
+            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=trilokesh.samal26@gmail.com" target="_blank" rel="noopener noreferrer" class="flex items-center gap-4 px-6 py-4 rounded-xl border dyn-email-pill font-semibold dyn-fg hover:opacity-80 transition cursor-pointer">
               <svg class="w-5 h-5 text-teal-600" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
                 <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
               </svg>
               trilokesh.samal26@gmail.com
-            </div>
+            </a>
           </div>
         </div>
         <div class="hidden lg:block relative">
@@ -333,7 +345,7 @@
   </section>
 
   <!-- Skills Grid -->
-  <section id="skills" class="py-32 bg-slate-900 text-white rounded-[3rem] mx-4 my-8 overflow-hidden relative">
+  <section id="skills" class="py-32 dyn-skills-section text-white rounded-[3rem] mx-4 my-8 overflow-hidden relative">
     <div class="absolute top-0 right-0 w-96 h-96 bg-teal-500/10 blur-[100px] rounded-full"></div>
     <div class="max-w-7xl mx-auto px-6 relative z-10">
       <div class="mb-20">
@@ -395,16 +407,15 @@
           <h2 class="text-4xl font-black dyn-fg mb-4">Direct Communication</h2>
           <p class="dyn-fg-muted">Available for executive advisory and high-impact operations leadership.</p>
         </div>
-        <a href="mailto:trilokesh.samal26@gmail.com" class="text-3xl md:text-5xl font-black text-teal-600 hover:text-teal-700 transition tracking-tighter">
+        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=trilokesh.samal26@gmail.com" target="_blank" rel="noopener noreferrer" class="text-3xl md:text-5xl font-black text-teal-600 hover:text-teal-700 transition tracking-tighter">
           trilokesh.samal26@gmail.com
         </a>
       </div>
       <div class="flex flex-col md:flex-row items-center justify-between pt-12 border-t dyn-border dyn-fg-muted text-sm">
         <div class="flex gap-8 mb-6 md:mb-0 font-semibold uppercase tracking-widest text-xs">
-          <a href="#" class="dyn-link-hover transition">LinkedIn</a>
-          <a href="#" class="dyn-link-hover transition">Twitter</a>
+          <a href="https://www.linkedin.com/in/trilokesh-samal-61b358140/" target="_blank" rel="noopener noreferrer" class="dyn-link-hover transition">LinkedIn</a>
         </div>
-        <p>© 2024 Trilokesh Samal. Built with Angular &amp; Three.js</p>
+        <p>© 2024 Trilokesh Samal. Built with Angular &amp; Tailwind CSS</p>
       </div>
     </div>
   </footer>
